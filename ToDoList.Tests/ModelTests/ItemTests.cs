@@ -1,4 +1,5 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.Extensions.Configuration;
 using System.Collections.Generic;
 using ToDoList.Models;
 using System;
@@ -8,10 +9,18 @@ namespace ToDoList.Tests
   [TestClass]
   public class ItemTests : IDisposable
   {
-
+    public IConfiguration Configuration { get; set; }
     public void Dispose()
     {
       Item.ClearAll();
+    }
+
+    public ItemTests()
+    {
+      IConfigurationBuilder builder = new ConfigurationBuilder()
+          .AddJsonFile("appsettings.json");
+      Configuration = builder.Build();
+      DBConfiguration.ConnectionString = Configuration["ConnectionStrings:TestConnection"];
     }
 
     [TestMethod]
