@@ -5,6 +5,7 @@ namespace ToDoList.Models
 {
   public class Item
   {
+
     public string Description { get; set; }
     public int Id { get; }
     public Item(string description)
@@ -12,11 +13,33 @@ namespace ToDoList.Models
       Description = description;
     }
 
+
     public Item(string description, int id)
     {
       Description = description;
       Id = id;
     }
+
+    public override bool Equals(System.Object otherItem)
+    {
+      if (!(otherItem is Item))
+      {
+        return false;
+      }
+      else
+      {
+        Item newItem = (Item)otherItem;
+        bool descriptionEquality = (this.Description == newItem.Description);
+        return descriptionEquality;
+      }
+    }
+
+    public override int GetHashCode()
+    {
+      return Id.GetHashCode();
+    }
+
+
 
     public static Item Find(int searchId)
     {
@@ -24,6 +47,7 @@ namespace ToDoList.Models
       Item placeholderItem = new Item("placeholder item");
       return placeholderItem;
     }
+
 
     public static List<Item> GetAll()
     {
@@ -52,6 +76,7 @@ namespace ToDoList.Models
       }
       return allItems;
     }
+
 
     public static void ClearAll()
     {
