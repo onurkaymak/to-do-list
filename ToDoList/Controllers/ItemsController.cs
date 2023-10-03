@@ -14,23 +14,33 @@ namespace ToDoList.Controllers
       _db = db;
     }
 
+    // /items - GET
     public ActionResult Index()
     {
       List<Item> model = _db.Items.ToList();
       return View(model);
     }
 
+    // /items/create - GET
     public ActionResult Create()
     {
       return View();
     }
 
+    // items/create - POST
     [HttpPost]
     public ActionResult Create(Item item)
     {
       _db.Items.Add(item);
       _db.SaveChanges();
       return RedirectToAction("Index");
+    }
+
+    // items/details - GET
+    public ActionResult Details(int id)
+    {
+      Item thisItem = _db.Items.FirstOrDefault(item => item.ItemId == id);
+      return View(thisItem);
     }
   }
 }
