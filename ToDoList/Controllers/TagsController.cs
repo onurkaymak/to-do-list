@@ -21,6 +21,18 @@ namespace ToDoList.Controllers
     {
       return View(_db.Tags.ToList());
     }
+    public ActionResult Create()
+    {
+      return View();
+    }
+
+    [HttpPost]
+    public ActionResult Create(Tag tag)
+    {
+      _db.Tags.Add(tag);
+      _db.SaveChanges();
+      return RedirectToAction("Index");
+    }
 
     public ActionResult Details(int id)
     {
