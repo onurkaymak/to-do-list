@@ -26,6 +26,17 @@ namespace ToDoList
                   .AddEntityFrameworkStores<ToDoListContext>()
                   .AddDefaultTokenProviders();
 
+      builder.Services.Configure<IdentityOptions>(options =>
+      {
+        // Default Password settings.
+        options.Password.RequireDigit = false;
+        options.Password.RequireLowercase = false;
+        options.Password.RequireNonAlphanumeric = false;
+        options.Password.RequireUppercase = false;
+        options.Password.RequiredLength = 0;
+        options.Password.RequiredUniqueChars = 0;
+      });
+
       WebApplication app = builder.Build();
 
       // app.UseDeveloperExceptionPage();
@@ -33,7 +44,7 @@ namespace ToDoList
       app.UseStaticFiles();
       app.UseRouting();
 
-      app.UseAuthentication(); 
+      app.UseAuthentication();
       app.UseAuthorization();
 
       app.MapControllerRoute(
