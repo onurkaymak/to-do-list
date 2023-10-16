@@ -4,10 +4,12 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Collections.Generic;
 using ToDoList.Models;
+using Microsoft.AspNetCore.Authorization;
 
 
 namespace ToDoList.Controllers
 {
+  [Authorize]
   public class ItemsController : Controller
   {
     private readonly ToDoListContext _db;
