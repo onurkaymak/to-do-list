@@ -5,6 +5,9 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Collections.Generic;
 using ToDoList.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using System.Threading.Tasks;
+using System.Security.Claims;
 
 
 namespace ToDoList.Controllers
@@ -13,22 +16,26 @@ namespace ToDoList.Controllers
   public class ItemsController : Controller
   {
     private readonly ToDoListContext _db;
+    private readonly UserManager<ApplicationUser> _userManager;
 
-    public ItemsController(ToDoListContext db)
+    public ItemsController(UserManager<ApplicationUser> userManager, ToDoListContext db)
     {
+      _userManager = userManager;
       _db = db;
     }
 
     // /items - GET
-    public ActionResult Index()
+    public async Task<ActionResult> Index()
     {
-      List<Item> model = _db.Items
-                      .Include(item => item.Category)
-                      .ToList();
-
-      ViewBag.PageTitle = "View All Items";
-      return View(model);
+      string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+      ApplicationUser currentUser = await _userManager.FindByIdAsync(userId);
+      List<Item> userItems = _db.Items
+                          .Where(entry => entry.User.Id == currentUser.Id)
+                          .Include(item => item.Category)
+                          .ToList();
+      return View(userItems);
     }
+
 
     // /items/create - GET
     public ActionResult Create()
