@@ -64,17 +64,45 @@ namespace ToDoList.Controllers
       }
     }
 
-
-    // /items/details/{id} - GET
-    public ActionResult Details(int id)
+    public async Task<ActionResult> Details(int id)
     {
-      Item thisItem = _db.Items
+      string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+      ApplicationUser currentUser = await _userManager.FindByIdAsync(userId);
+      Dictionary<string, Item> model = new Dictionary<string, Item>();
+
+      if (currentUser != null)
+      {
+#nullable enable
+        Item? thisItem = _db.Items
+          .Where(entry => entry.User.Id == currentUser.Id)
           .Include(item => item.Category)
           .Include(item => item.JoinEntities)
           .ThenInclude(join => join.Tag)
           .FirstOrDefault(item => item.ItemId == id);
-      return View(thisItem);
+#nullable disable
+
+        if (thisItem != null)
+        {
+          model.Add("thisItem", thisItem);
+        }
+        else
+        {
+          return RedirectToAction("Index", "Home");
+        }
+      }
+      return View(model);
     }
+
+    // /items/details/{id} - GET
+    // public ActionResult Details(int id)
+    // {
+    //   Item thisItem = _db.Items
+    //       .Include(item => item.Category)
+    //       .Include(item => item.JoinEntities)
+    //       .ThenInclude(join => join.Tag)
+    //       .FirstOrDefault(item => item.ItemId == id);
+    //   return View(thisItem);
+    // }
 
     // /items/edit/{id} - GET
     public ActionResult Edit(int id)
